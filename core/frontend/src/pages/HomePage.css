@@ -269,15 +269,33 @@
 }
 
 .service-icon-circle {
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  /* 稍微加大一点圈圈 */
+  height: 70px;
   border-radius: 50%;
   background: #f0f8ff;
+  /* 淡蓝色背景 */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  color: #3B99FC;
+  /* font-size: 24px;  <-- 删掉这一行，不再需要字体大小 */
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+
+/* 新增：控制图标图片的样式 */
+.service-img {
+  width: 36px;
+  /* 图标大小，根据实际图片调整 */
+  height: 36px;
+  object-fit: contain;
+}
+
+/* 鼠标悬停效果增强 */
+.service-item:hover .service-icon-circle {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(59, 153, 252, 0.3);
+  transform: translateY(-2px);
 }
 
 .service-title {

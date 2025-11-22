@@ -3,6 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { Carousel } from 'antd'
 import './HomePage.css'
 
+import iconBooking from '../assets/images/booking.png'
+import iconLost from '../assets/images/lost.png' // 暂代
+import iconCar from '../assets/images/car.png'    // 暂代
+import iconDelivery from '../assets/images/Delivery.png' // 暂代
+import iconStation from '../assets/images/station.png' // 暂代
+import iconFeature from '../assets/images/feature.png'
+import iconFeedback from '../assets/images/feedback.png' // 暂代
+
 const HomePage = () => {
   const navigate = useNavigate()
 
@@ -61,6 +69,16 @@ const HomePage = () => {
     'https://www.12306.cn/index/images/pic/banner0619.jpg',
     'https://www.12306.cn/index/images/pic/banner20200707.jpg',
     'https://www.12306.cn/index/images/pic/banner20201223.jpg',
+  ]
+
+  const serviceItems = [
+    { title: "重点旅客预约", icon: iconBooking },
+    { title: "遗失物品查找", icon: iconLost },
+    { title: "约车服务", icon: iconCar },
+    { title: "便民托运", icon: iconDelivery },
+    { title: "车站引导", icon: iconStation },
+    { title: "站车风采", icon: iconFeature },
+    { title: "用户反馈", icon: iconFeedback },
   ]
 
   return (
@@ -186,17 +204,13 @@ const HomePage = () => {
 
         </div>
       </div>
-
+      
       {/* 2. 中部服务图标栏 */}
       <div className="service-bar">
         <div className="container service-grid">
-          <ServiceItem icon="👤" title="重点旅客预约" />
-          <ServiceItem icon="📦" title="遗失物品查找" />
-          <ServiceItem icon="🤝" title="约车服务" />
-          <ServiceItem icon="🚚" title="便民托运" />
-          <ServiceItem icon="🚉" title="车站引导" />
-          <ServiceItem icon="🎫" title="站车风采" />
-          <ServiceItem icon="💬" title="用户反馈" />
+          {serviceItems.map((item, index) => (
+            <ServiceItem key={index} icon={item.icon} title={item.title} />
+          ))}
         </div>
       </div>
 
@@ -257,7 +271,10 @@ const HomePage = () => {
 // 简单的子组件
 const ServiceItem = ({ icon, title }) => (
   <div className="service-item">
-    <div className="service-icon-circle">{icon}</div>
+    <div className="service-icon-circle">
+      {/* 关键修改：这里变成了 img 标签 */}
+      <img src={icon} alt={title} className="service-img" />
+    </div>
     <span className="service-title">{title}</span>
   </div>
 )

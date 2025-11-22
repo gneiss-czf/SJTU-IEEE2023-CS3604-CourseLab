@@ -84,11 +84,12 @@ const Header = () => {
         <div className="container brand-container">
           <Link to="/" className="logo-wrapper">
             {/* 使用 emoji 模拟 logo，实际项目中请替换为 img */}
-            <div className="logo-icon">🚄</div>
-            <div className="logo-text">
+            {/* <div className="logo-icon">🚄</div> */}
+            <img src="https://www.12306.cn/index/images/logo.png" alt="12306 Logo" className="logo-img" style={{ height: '40px' }} />
+            {/* <div className="logo-text">
               <span className="logo-cn">中国铁路12306</span>
               <span className="logo-en">China Railway</span>
-            </div>
+            </div> */}
           </Link>
 
           <div className="search-site">

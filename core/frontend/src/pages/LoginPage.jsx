@@ -89,11 +89,12 @@ const LoginPage = () => {
       <div className="login-header-simple">
         <div className="header-content">
           <Link to="/" className="simple-logo">
-            <span className="logo-icon">🚄</span>
-            <div className="logo-text">
+            {/* <span className="logo-icon">🚄</span> */}
+            <img src="https://www.12306.cn/index/images/logo.png" alt="Logo" style={{ height: '48px', marginRight: '10px' }} />
+            {/* <div className="logo-text">
               <span className="cn">中国铁路12306</span>
               <span className="en">China Railway</span>
-            </div>
+            </div> */}
           </Link>
           <span className="welcome-text">欢迎登录12306</span>
         </div>

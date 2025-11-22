@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Carousel } from 'antd'
 import './HomePage.css'
 
 const HomePage = () => {
@@ -35,13 +36,35 @@ const HomePage = () => {
     navigate('/search-results', { state: searchForm })
   }
 
+  // 定义轮播图组数
+  const bannerImages = [
+    'https://www.12306.cn/index/images/pic/banner10.jpg',
+    'https://www.12306.cn/index/images/pic/banner12.jpg',
+    'https://www.12306.cn/index/images/pic/banner26.jpg',
+    'https://www.12306.cn/index/images/pic/banner0619.jpg',
+    'https://www.12306.cn/index/images/pic/banner20200707.jpg',
+    'https://www.12306.cn/index/images/pic/banner20201223.jpg',
+  ]
+
   return (
     <div className="home-page">
 
       {/* 1. 全屏 Banner 区域 */}
       <div className="hero-section">
         {/* 背景图容器：这里使用一张高铁网络图作为示例，实际需替换为本地图片 */}
-        <div className="hero-bg"></div>
+        <div className="hero-carousel-wrapper">
+          <Carousel autoplay effect="scrollx" dots={false}>
+            {bannerImages.map((imgUrl, index) => (
+              <div key={index}>
+                {/* 每一屏的背景图 */}
+                <div
+                  className="carousel-bg-item"
+                  style={{ backgroundImage: `url(${imgUrl})` }}
+                ></div>
+              </div>
+            ))}
+          </Carousel>
+        </div>
 
         <div className="hero-content container">
 
@@ -138,11 +161,11 @@ const HomePage = () => {
           </div>
 
           {/* 右侧：透明文字/广告区 (模拟官网右侧的保险广告) */}
-          <div className="hero-promo">
+          {/* <div className="hero-promo">
             <div className="promo-title">铁路乘意险</div>
             <div className="promo-sub">满满诚意 护佑平安</div>
             <div className="promo-desc">给您贴心的保障</div>
-          </div>
+          </div> */}
 
         </div>
       </div>

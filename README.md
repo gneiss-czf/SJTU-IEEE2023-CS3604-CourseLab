@@ -40,7 +40,7 @@ npm run dev
 
 ### 2. 后端启动 (Backend)
 
-后端基于 Node.js + TypeScript + Prisma 构建。
+后端基于 Node. Js + TypeScript + Prisma 构建。
 
 ```bash
 # 1. 新开一个终端窗口，进入后端目录
@@ -58,9 +58,9 @@ npm run dev
 
 ---
 
-## 🛠 开发与协作规范 (Git Workflow)
+## 🛠 开发与协作规范 (Git Workflow & Issues)
 
-为了避免代码冲突和版本混乱，请所有成员严格遵守以下 **分支管理规范**。
+本项目采用 **GitHub Issues** 驱动的开发模式。请严格遵守以下规范以确保任务可追踪。
 
 ### 🚫 三大红线 (Don'ts)
 1. **禁止** 直接在 `main` 分支上修改代码！`main` 分支应永远保持可运行状态。
@@ -69,8 +69,8 @@ npm run dev
 
 ### ✅ 正确的开发流程 (Do's)
 
-#### 第一步：创建独立分支
-在开始任何新功能或修复 Bug 前，请从 `main` 拉取一个新分支：
+#### 第一步：领取任务与创建分支
+在开始工作前，请先在 GitHub 上创建或认领一个 **Issue**。
 
 ```bash
 # 确保在主分支并同步最新代码
@@ -78,20 +78,27 @@ git checkout main
 git pull
 
 # 创建并切换到你的分支
-# 命名格式：类型/描述
-# 示例：feat/login-page (新功能), fix/white-screen (修Bug)
-git checkout -b feat/你的功能名
+# 推荐命名格式：类型/issue编号-描述
+# 示例：feat/issue-12-login-page (对应 12 号 Issue)
+git checkout -b feat/issue-编号-简短描述
 ```
 
-#### 第二步：在分支中开发与提交
-在你的分支中进行开发。建议保持细粒度的提交：
+#### 第二步：开发与提交 (关联 Issue)
+在分支中进行开发。**提交时请务必关联 Issue**。
 
 ```bash
 git add .
-git commit -m "feat: 完成了登录框样式的优化"
+
+# 场景 A：常规提交（关联 Issue，但不关闭）
+# 语法：Refs #编号
+git commit -m "feat: 完成登录框样式布局 (Refs #12)"
+
+# 场景 B：完成任务提交（合并后自动关闭 Issue）
+# 语法：Closes #编号 或 Fixes #编号
+git commit -m "fix: 修复白屏问题，完成开发 (Closes #12)"
 ```
 
-*Commit Message 格式建议：`类型: 简短描述`*
+*Commit Message 格式建议：`类型: 简短描述 (Refs/Closes #编号)`*
 
 #### 第三步：合并回主分支
 确认功能开发完成且测试无误后，将代码合并回主分支：
@@ -104,16 +111,16 @@ git checkout main
 git pull
 
 # 3. 合并你的分支
-git merge feat/你的功能名
+git merge feat/issue-编号-简短描述
 
-# 4. 推送到远程仓库
+# 4. 推送到远程仓库 (此时 GitHub 会自动处理 Issue 状态)
 git push
 ```
 
 #### 第四步：清理
 合并完成后，删除已无用的功能分支：
 ```bash
-git branch -d feat/你的功能名
+git branch -d feat/issue-编号-简短描述
 ```
 
 ---

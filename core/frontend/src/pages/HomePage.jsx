@@ -33,8 +33,20 @@ const HomePage = () => {
     }))
   }
 
+  // const handleSwap = () => {
+  //   setSearchForm(prev => ({
+  //     ...prev,
+  //     from: prev.to,
+  //     to: prev.from
+  //   }))
+  // }
+
   const handleSwap = () => {
-    setSearchForm(prev => ({ ...prev, from: prev.to, to: prev.from }))
+    setSearchForm(prev => ({
+      ...prev,
+      from: prev.to,
+      to: prev.to
+    }))
   }
 
   const handleSearch = (e) => {

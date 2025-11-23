@@ -1,0 +1,200 @@
+# ==============================================================================
+# MODULE: F001 - 导航栏访问
+# ==============================================================================
+- type: Backend
+  id: API-GET-AuthStatus
+  route: GET /api/v1/auth/status
+  implements: [F001]
+  output:
+    success: { statusCode: 200, body: { user: {...} } }
+  acceptanceCriteria:
+    - req_id: F001-S09
+      case: "Token 无效时返回 401"
+
+# ==============================================================================
+# MODULE: F002 - 快捷入口访问
+# ==============================================================================
+- type: Backend
+  id: API-GET-SearchHistory
+  route: GET /api/v1/user/history
+  implements: [F002]
+  acceptanceCriteria:
+    - req_id: F002-S03
+      case: "返回最近 5 条记录"
+
+# ==============================================================================
+# MODULE: F003 - 车票查询
+# ==============================================================================
+- type: Backend
+  id: API-GET-StationList
+  route: GET /api/v1/stations
+  implements: [F003]
+  input: { keyword: string }
+  acceptanceCriteria:
+    - req_id: F003-S01
+      case: "支持模糊搜索"
+
+- type: Backend
+  id: API-GET-TrainQuery
+  route: GET /api/v1/trains
+  implements: [F003]
+  input: { from: string, to: string, date: string }
+  acceptanceCriteria:
+    - req_id: F003-S17
+      case: "返回各席别实时余票"
+
+# ==============================================================================
+# MODULE: F005 - 车票预订
+# ==============================================================================
+- type: Backend
+  id: API-POST-LockTicket
+  route: POST /api/v1/tickets/lock
+  implements: [F005]
+  input: { trainId: string, passengers: [], seatType: string }
+  output:
+    success: { orderId: string }
+    error: { code: NO_TICKET }
+  acceptanceCriteria:
+    - req_id: F005-S02
+      case: "并发下需保证不超卖"
+
+# ==============================================================================
+# MODULE: F006 - 中转换乘查询
+# ==============================================================================
+- type: Backend
+  id: API-GET-TransferRoutes
+  route: GET /api/v1/trains/transfer
+  implements: [F006]
+  acceptanceCriteria:
+    - req_id: F006-S05
+      case: "换乘时间需在 30m - 4h 之间"
+
+# ==============================================================================
+# MODULE: F007 - 用户登录
+# ==============================================================================
+- type: Backend
+  id: API-POST-Login
+  route: POST /api/v1/auth/login
+  implements: [F007]
+  input: { type: string, payload: object }
+  output: { token: string }
+  acceptanceCriteria:
+    - req_id: F007-S20
+      case: "密码错误时提示模糊信息防爆破"
+
+- type: Backend
+  id: API-POST-SendCode
+  route: POST /api/v1/auth/code
+  implements: [F007, F008]
+  acceptanceCriteria:
+    - req_id: F007-S08
+      case: "验证码有效期 5 分钟"
+
+# ==============================================================================
+# MODULE: F008 - 用户注册
+# ==============================================================================
+- type: Backend
+  id: API-POST-Register
+  route: POST /api/v1/auth/register
+  implements: [F008]
+  input: { phone: string, password: string, code: string }
+  acceptanceCriteria:
+    - req_id: F008-S02
+      case: "手机号已存在返回 409"
+
+# ==============================================================================
+# MODULE: F010 - 提交订单
+# ==============================================================================
+- type: Backend
+  id: API-POST-CreateOrder
+  route: POST /api/v1/orders
+  implements: [F010]
+  input: { lockId: string, contact: object }
+  acceptanceCriteria:
+    - req_id: F010-S09
+      case: "创建订单时设置 30 分钟支付超时"
+
+# ==============================================================================
+# MODULE: F011 - 个人信息管理
+# ==============================================================================
+- type: Backend
+  id: API-GET-UserProfile
+  route: GET /api/v1/user/profile
+  implements: [F011]
+  acceptanceCriteria:
+    - req_id: F011-S03
+      case: "敏感字段需脱敏"
+
+- type: Backend
+  id: API-PUT-UserProfile
+  route: PUT /api/v1/user/profile
+  implements: [F011]
+  acceptanceCriteria:
+    - req_id: F011-S12
+      case: "修改手机号需验证新旧号码"
+
+# ==============================================================================
+# MODULE: F012 - 乘客管理
+# ==============================================================================
+- type: Backend
+  id: API-GET-PassengerList
+  route: GET /api/v1/passengers
+  implements: [F012]
+  acceptanceCriteria:
+    - req_id: F012-S01
+      case: "返回当前用户的所有常用联系人"
+
+- type: Backend
+  id: API-POST-Passenger
+  route: POST /api/v1/passengers
+  implements: [F012]
+  acceptanceCriteria:
+    - req_id: F012-S23
+      case: "证件号重复时禁止添加"
+
+# ==============================================================================
+# MODULE: F013 - 订单管理
+# ==============================================================================
+- type: Backend
+  id: API-GET-OrderList
+  route: GET /api/v1/orders
+  implements: [F013]
+  input: { status: string, page: int }
+  acceptanceCriteria:
+    - req_id: F013-S10
+      case: "默认按创建时间倒序排列"
+
+# ==============================================================================
+# MODULE: F014 - 订单支付
+# ==============================================================================
+- type: Backend
+  id: API-POST-InitiatePay
+  route: POST /api/v1/pay
+  implements: [F014]
+  input: { orderId: string, method: string }
+  acceptanceCriteria:
+    - req_id: F014-S14
+      case: "返回第三方支付跳转链接或参数"
+
+# ==============================================================================
+# MODULE: F015 - 车票改签
+# ==============================================================================
+- type: Backend
+  id: API-POST-ChangeTicket
+  route: POST /api/v1/tickets/change
+  implements: [F015]
+  input: { oldOrderId: string, newTrainId: string }
+  acceptanceCriteria:
+    - req_id: F015-S03
+      case: "每张票仅限改签一次"
+
+# ==============================================================================
+# MODULE: F016 - 用户登出
+# ==============================================================================
+- type: Backend
+  id: API-POST-Logout
+  route: POST /api/v1/auth/logout
+  implements: [F016]
+  acceptanceCriteria:
+    - req_id: F016-S04
+      case: "服务端需注销 Token"

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>中国铁路12306 - 首页</title>
+  <link rel="stylesheet" href="/ui/styles.css" />
+</head>
+<body>
+  <header id="header-root"></header>
+  <main class="hero">
+    <div class="ticket-widget">
+      <div class="tabs">
+        <button class="tab active">单程</button>
+        <button class="tab">往返</button>
+        <button class="tab">中转换乘</button>
+        <button class="tab">退改签</button>
+      </div>
+      <div class="form">
+        <div class="row">
+          <label>出发地</label>
+          <input id="fromStation" placeholder="北京" />
+          <label>到达地</label>
+          <input id="toStation" placeholder="上海" />
+        </div>
+        <div class="row">
+          <label>出发日期</label>
+          <input id="travelDate" type="date" />
+          <label class="checkbox"><input type="checkbox" id="isStudent" />学生</label>
+          <label class="checkbox"><input type="checkbox" id="hasTicket" />仅显示有票</label>
+          <button class="primary" id="searchBtn">查 询</button>
+        </div>
+      </div>
+      <div class="breadcrumb" id="breadcrumb"></div>
+    </div>
+
+    <div class="hero-banner">
+      <div class="bubble">计次·定期票 开售</div>
+      <div class="slogan">直刷乘车，出行乐无忧</div>
+    </div>
+  </main>
+
+  <section id="quick-root" class="quick-section"></section>
+
+  <script src="/ui/p001.js" type="module"></script>
+</body>
+</html>
+

@@ -1,0 +1,121 @@
+# ==============================================================================
+# MODULE: F001 - 导航栏访问
+# ==============================================================================
+- type: Backend
+  id: API-GET-Session
+  implements: ["F001"]
+  route: "/api/session"
+  method: GET
+  auth: { required: false, scheme: Bearer }
+  request:
+    headers: ["Authorization"]
+    query: {}
+    body: null
+  response:
+    200:
+      contentType: application/json
+      body: { userId: string, username: string, avatarUrl: string }
+    401:
+      contentType: application/json
+      body: { code: "UNAUTHORIZED", message: string }
+    5xx:
+      contentType: application/json
+      body: { code: "INTERNAL_ERROR", message: string }
+  errors:
+    - { statusCode: 401, code: UNAUTHORIZED, description: "Token 缺失或过期" }
+    - { statusCode: 500, code: INTERNAL_ERROR, description: "服务异常" }
+  acceptanceCriteria:
+    - req_id: F001-S02
+      case: "接口 API-GET-Session 在无效/缺失 token 下返回 statusCode=401，body.code==='UNAUTHORIZED'"
+    - req_id: F001-S03
+      case: "接口 API-GET-Session 在有效 token 下返回 200，body.username 非空且 body.avatarUrl 非空"
+    - req_id: F001-S09
+      case: "接口 API-GET-Session 在 token 过期时返回 401，body.code==='UNAUTHORIZED'"
+
+# ==============================================================================
+# MODULE: F002 - 快捷入口访问
+# ==============================================================================
+- type: Backend
+  id: API-GET-Recommendations
+  implements: ["F002"]
+  route: "/api/recommendations"
+  method: GET
+  auth: { required: true, scheme: Bearer }
+  request:
+    headers: ["Authorization"]
+    query: { userId: string }
+    body: null
+  response:
+    200:
+      contentType: application/json
+      body: { items: [{ id: string, label: string, route: string, score: number }] }
+    401:
+      contentType: application/json
+      body: { code: "UNAUTHORIZED", message: string }
+    5xx:
+      contentType: application/json
+      body: { code: "INTERNAL_ERROR", message: string }
+  errors:
+    - { statusCode: 401, code: UNAUTHORIZED, description: "未登录用户调用" }
+    - { statusCode: 500, code: INTERNAL_ERROR, description: "推荐服务异常" }
+  acceptanceCriteria:
+    - req_id: F002-S02
+      case: "接口 API-GET-Recommendations 在有效鉴权下返回 200，body.items.length>0"
+    - req_id: F002-S09
+      case: "接口 API-GET-Recommendations 在推荐接口异常时返回 5xx，body.code==='INTERNAL_ERROR'"
+
+- type: Backend
+  id: API-GET-Search-History
+  implements: ["F002"]
+  route: "/api/search-history"
+  method: GET
+  auth: { required: true, scheme: Bearer }
+  request:
+    headers: ["Authorization"]
+    query: { userId: string, limit: number }
+    body: null
+  response:
+    200:
+      contentType: application/json
+      body: { items: [{ id: string, fromStation: string, toStation: string, travelDate: string, createdAt: string }] }
+    401:
+      contentType: application/json
+      body: { code: "UNAUTHORIZED", message: string }
+    5xx:
+      contentType: application/json
+      body: { code: "INTERNAL_ERROR", message: string }
+  errors:
+    - { statusCode: 401, code: UNAUTHORIZED, description: "未登录用户调用" }
+    - { statusCode: 500, code: INTERNAL_ERROR, description: "历史记录服务异常" }
+  acceptanceCriteria:
+    - req_id: F002-S03
+      case: "接口 API-GET-Search-History 在有效鉴权下返回 200，body.items.length≤5 且 items 以 createdAt 倒序排列"
+    - req_id: F002-S08
+      case: "接口 API-GET-Search-History 在未登录时返回 401，body.code==='UNAUTHORIZED'"
+
+- type: Backend
+  id: API-DELETE-Search-History
+  implements: ["F002"]
+  route: "/api/search-history"
+  method: DELETE
+  auth: { required: true, scheme: Bearer }
+  request:
+    headers: ["Authorization"]
+    query: { userId: string, scope: string }
+    body: null
+  response:
+    200:
+      contentType: application/json
+      body: { deletedCount: number }
+    401:
+      contentType: application/json
+      body: { code: "UNAUTHORIZED", message: string }
+    5xx:
+      contentType: application/json
+      body: { code: "INTERNAL_ERROR", message: string }
+  errors:
+    - { statusCode: 401, code: UNAUTHORIZED, description: "未登录用户调用" }
+    - { statusCode: 500, code: INTERNAL_ERROR, description: "历史记录删除失败" }
+  acceptanceCriteria:
+    - req_id: F002-S07
+      case: "接口 API-DELETE-Search-History 在确认删除后返回 200，body.deletedCount>0"

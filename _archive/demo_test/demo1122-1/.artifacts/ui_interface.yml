@@ -1,0 +1,92 @@
+# ==============================================================================
+# MODULE: F001 - 导航栏访问
+# ==============================================================================
+- type: Frontend
+  id: UI-Header
+  page: P001
+  implements: ["F001"]
+  properties:
+    entries:
+      - { id: home, label: "首页", route: P001, isVisible: true }
+      - { id: search, label: "查询", route: P002, isVisible: true }
+      - { id: profile, label: "个人中心", route: P006, isVisible: true }
+    entryLogin: { id: login, label: "登录", route: P003, isVisible: true }
+    entryRegister: { id: register, label: "注册", route: P004, isVisible: true }
+    style: { position: sticky, top: 0 }
+  state:
+    isLoadingSession: true
+    errorSession: null
+    isLoggedIn: false
+    activeRoute: P001
+    redirecting: false
+    navigationTarget: null
+    userDisplay: { username: null, avatarUrl: null }
+    userMenu: { isOpen: false, items: ["个人中心", "退出登录"] }
+  dependencies:
+    apis: ["API-GET-Session"]
+    routers: [P001, P002, P003, P004, P006]
+  acceptanceCriteria:
+    - req_id: F001-S01
+      case: "接口 UI-Header 在页面渲染时 style.position=sticky 且 style.top=0，isVisible=true"
+    - req_id: F001-S02
+      case: "接口 UI-Header 在 isLoggedIn=false 时 entryLogin.isVisible=true、entryRegister.isVisible=true、userDisplay.username=null、userMenu.isOpen=false"
+    - req_id: F001-S03
+      case: "接口 UI-Header 在 isLoggedIn=true 时 entryLogin.isVisible=false、entryRegister.isVisible=false，userDisplay.username!==null 且 userDisplay.avatarUrl!==null"
+    - req_id: F001-S04
+      case: "接口 UI-Header 在初始化时 entries 包含 route∈{P001,P002,P006} 的3个入口且均 isVisible=true"
+    - req_id: F001-S05
+      case: "接口 UI-Header 在点击 entryLogin 时 redirecting=true 且 navigationTarget===P003"
+    - req_id: F001-S06
+      case: "接口 UI-Header 在点击 entryRegister 时 redirecting=true 且 navigationTarget===P004"
+    - req_id: F001-S07
+      case: "接口 UI-Header 在点击 userDisplay.username 时 userMenu.isOpen=true 且 userMenu.items 包含 '个人中心' 与 '退出登录'"
+    - req_id: F001-S08
+      case: "接口 UI-Header 在路由切换时 activeRoute===currentPage，entries 中非当前项 isHighlighted=false、当前项 isHighlighted=true"
+    - req_id: F001-S09
+      case: "接口 UI-Header 在 API-GET-Session 返回401时 isLoadingSession=false，redirecting=true 且 navigationTarget===P003"
+
+# ==============================================================================
+# MODULE: F002 - 快捷入口访问
+# ==============================================================================
+- type: Frontend
+  id: UI-QuickEntry
+  page: P001
+  implements: ["F002"]
+  properties:
+    baseEntries:
+      - { id: ticket-search, label: "车票查询", route: P002 }
+      - { id: order-search, label: "订单查询", route: P006 }
+      - { id: change-refund, label: "改签退票", route: P006, operation: change_or_refund }
+  state:
+    isLoggedIn: false
+    isLoadingRecommendations: false
+    errorRecommendations: null
+    recommendations: []
+    isLoadingHistory: false
+    errorHistory: null
+    historyItems: []
+    hasDegraded: false
+    fallbackEnabled: false
+    confirmDialog: { isVisible: false }
+  dependencies:
+    apis: ["API-GET-Recommendations", "API-GET-Search-History", "API-DELETE-Search-History"]
+    routers: [P002, P006]
+  acceptanceCriteria:
+    - req_id: F002-S01
+      case: "接口 UI-QuickEntry 在渲染时 baseEntries 包含 '车票查询'、'订单查询'、'改签退票' 且均可点击"
+    - req_id: F002-S02
+      case: "接口 UI-QuickEntry 在 isLoggedIn=true 时 isLoadingRecommendations=true→false，recommendations.length>0 且渲染推荐卡片"
+    - req_id: F002-S03
+      case: "接口 UI-QuickEntry 在加载历史记录成功时 historyItems.length≤5 且按 createdAt 倒序显示"
+    - req_id: F002-S04
+      case: "接口 UI-QuickEntry 在点击 baseEntries.ticket-search 时 redirecting=true 且 navigationTarget===P002"
+    - req_id: F002-S05
+      case: "接口 UI-QuickEntry 在点击 baseEntries.order-search 时 redirecting=true 且 navigationTarget===P006"
+    - req_id: F002-S06
+      case: "接口 UI-QuickEntry 在点击 historyItems[i] 时触发 populateSearchForm 事件并设置查询条件 from/to/date 为该项值"
+    - req_id: F002-S07
+      case: "接口 UI-QuickEntry 在执行清除历史记录动作时 confirmDialog.isVisible=true；确认后调用 API-DELETE-Search-History 成功则 historyItems=[]"
+    - req_id: F002-S08
+      case: "接口 UI-QuickEntry 在 isLoggedIn=false 时 recommendations 不展示（recommendations.length===0），仅显示 baseEntries"
+    - req_id: F002-S09
+      case: "接口 UI-QuickEntry 在 API-GET-Recommendations 返回错误时 errorRecommendations 设置、hasDegraded=true、fallbackEnabled=true，仅展示 baseEntries"

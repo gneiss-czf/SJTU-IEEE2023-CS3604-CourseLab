@@ -1,0 +1,48 @@
+# ==============================================================================
+# MODULE: F001 - 导航栏访问
+# ==============================================================================
+- type: Database
+  id: DB-SessionStore
+  implements: ["F001"]
+  table: sessions
+  fields:
+    - { name: id, type: uuid, constraints: [primary_key] }
+    - { name: userId, type: uuid, constraints: [not_null] }
+    - { name: token, type: string, constraints: [not_null, unique] }
+    - { name: expiresAt, type: timestamp, constraints: [not_null] }
+    - { name: createdAt, type: timestamp, constraints: [not_null, default_now] }
+  indexes:
+    - { name: idx_sessions_userId, columns: [userId] }
+    - { name: idx_sessions_expiresAt, columns: [expiresAt] }
+    - { name: idx_sessions_user_expires, columns: [userId, expiresAt] }
+  constraints:
+    - { rule: "expiresAt 必须大于 createdAt", level: check }
+  acceptanceCriteria:
+    - req_id: F001-S09
+      case: "接口 DB-SessionStore 在按 token 查询 active 会话时若 expiresAt<now，则输出 rows.length===0（无有效会话）"
+
+# ==============================================================================
+# MODULE: F002 - 快捷入口访问
+# ==============================================================================
+- type: Database
+  id: DB-SearchHistory
+  implements: ["F002"]
+  table: search_history
+  fields:
+    - { name: id, type: uuid, constraints: [primary_key] }
+    - { name: userId, type: uuid, constraints: [not_null] }
+    - { name: fromStation, type: string, constraints: [not_null] }
+    - { name: toStation, type: string, constraints: [not_null] }
+    - { name: travelDate, type: date, constraints: [not_null] }
+    - { name: query, type: string, constraints: [] }
+    - { name: createdAt, type: timestamp, constraints: [not_null, default_now] }
+    - { name: deletedAt, type: timestamp, constraints: [] }
+  indexes:
+    - { name: idx_history_user_createdAt_desc, columns: [userId, createdAt], order: [ASC, DESC] }
+  constraints:
+    - { rule: "deletedAt 为 null 表示有效记录（软删除）", level: check }
+  acceptanceCriteria:
+    - req_id: F002-S03
+      case: "接口 DB-SearchHistory 在按 userId 查询有效记录时输出 items.length≤5 且以 createdAt 倒序"
+    - req_id: F002-S07
+      case: "接口 DB-SearchHistory 在执行用户范围删除后返回 deletedCount>0；再次查询该用户有效记录为空"

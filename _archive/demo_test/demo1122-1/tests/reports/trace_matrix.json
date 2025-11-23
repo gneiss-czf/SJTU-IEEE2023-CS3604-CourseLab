@@ -1,0 +1,47 @@
+{
+  "version": "v1.0",
+  "page_id": "P001",
+  "features": [
+    {
+      "id": "F001",
+      "name": "导航栏访问",
+      "artifact_refs": {
+        "ui": "UI-Header",
+        "apis": ["API-GET-Session"],
+        "data": ["DB-SessionStore"]
+      },
+      "sub_requirements": [
+        { "sub_id": "F001-S01", "type": "Component", "test": "tests/frontend/pages/P001_Home/component/index.spec.tsx", "impl": "UI-Header", "status": "implemented" },
+        { "sub_id": "F001-S02", "type": "Component", "test": "tests/frontend/pages/P001_Home/component/index.spec.tsx", "impl": "UI-Header", "status": "implemented" },
+        { "sub_id": "F001-S03", "type": "Integration", "test": "tests/frontend/pages/P001_Home/integration/msw_index.spec.ts", "impl": "UI-Header → API-GET-Session (MSW)", "status": "implemented" },
+        { "sub_id": "F001-S04", "type": "Component", "test": "tests/frontend/pages/P001_Home/component/index.spec.tsx", "impl": "UI-Header", "status": "implemented" },
+        { "sub_id": "F001-S05", "type": "Integration", "test": "tests/frontend/pages/P001_Home/integration/index.spec.tsx", "impl": "UI-Header → Router(P003)", "status": "implemented" },
+        { "sub_id": "F001-S06", "type": "Integration", "test": "tests/frontend/pages/P001_Home/integration/index.spec.tsx", "impl": "UI-Header → Router(P004)", "status": "implemented" },
+        { "sub_id": "F001-S07", "type": "Component", "test": "tests/frontend/pages/P001_Home/component/index.spec.tsx", "impl": "UI-Header", "status": "implemented" },
+        { "sub_id": "F001-S08", "type": "Component", "test": "tests/frontend/pages/P001_Home/component/index.spec.tsx", "impl": "UI-Header", "status": "implemented" },
+        { "sub_id": "F001-S09", "type": "Unit", "test": "tests/backend/modules/F001_Navbar/unit/index.spec.ts", "impl": "API-GET-Session / DB-SessionStore", "status": "implemented" }
+      ]
+    },
+    {
+      "id": "F002",
+      "name": "快捷入口访问",
+      "artifact_refs": {
+        "ui": "UI-QuickEntry",
+        "apis": ["API-GET-Recommendations", "API-GET-Search-History", "API-DELETE-Search-History"],
+        "data": ["DB-SearchHistory"]
+      },
+      "sub_requirements": [
+        { "sub_id": "F002-S01", "type": "Component", "test": "tests/frontend/pages/P001_Home/component/index.spec.tsx", "impl": "UI-QuickEntry", "status": "implemented" },
+        { "sub_id": "F002-S02", "type": "Integration", "test": "tests/frontend/pages/P001_Home/integration/msw_index.spec.ts", "impl": "UI-QuickEntry → API-GET-Recommendations (MSW)", "status": "implemented" },
+        { "sub_id": "F002-S03", "type": "Integration", "test": "tests/backend/modules/F002_QuickEntry/integration/index.spec.ts", "impl": "API-GET-Search-History / DB-SearchHistory (Supertest)", "status": "implemented" },
+        { "sub_id": "F002-S04", "type": "Integration", "test": "tests/frontend/pages/P001_Home/integration/index.spec.tsx", "impl": "UI-QuickEntry → Router(P002)", "status": "implemented" },
+        { "sub_id": "F002-S05", "type": "Integration", "test": "tests/frontend/pages/P001_Home/integration/index.spec.tsx", "impl": "UI-QuickEntry → Router(P006)", "status": "implemented" },
+        { "sub_id": "F002-S06", "type": "Component", "test": "tests/frontend/pages/P001_Home/component/index.spec.tsx", "impl": "UI-QuickEntry → populateSearchForm", "status": "implemented" },
+        { "sub_id": "F002-S07", "type": "Integration", "test": "tests/frontend/pages/P001_Home/integration/msw_index.spec.ts", "impl": "UI-QuickEntry → API-DELETE-Search-History (MSW) / Supertest", "status": "implemented" },
+        { "sub_id": "F002-S08", "type": "Unit", "test": "tests/frontend/pages/P001_Home/unit/index.spec.ts", "impl": "UI-QuickEntry gating (isLoggedIn=false)", "status": "implemented" },
+        { "sub_id": "F002-S09", "type": "Unit", "test": "tests/frontend/pages/P001_Home/unit/index.spec.ts", "impl": "UI-QuickEntry degrade flags", "status": "implemented" }
+      ]
+    }
+  ],
+  "next_cursor": { "page_id": "P001", "feature_id": "F002" }
+}

@@ -1,0 +1,309 @@
+# ==============================================================================
+# MODULE: F001 - 导航栏访问
+# ==============================================================================
+- type: Frontend
+  id: UI-Header
+  description: 全局顶部导航栏
+  implements: [F001, F016]
+  properties:
+    - name: userInfo
+      type: object
+      description: "用户头像与昵称 (F001-S03)"
+  state:
+    - isLoggedIn
+    - activeTab
+  dependencies:
+    - API-GET-AuthStatus
+    - API-POST-Logout
+  acceptanceCriteria:
+    - req_id: F001-S01
+      case: "导航栏应固定在页面顶部"
+    - req_id: F001-S05
+      case: "未登录时点击登录按钮跳转 P003"
+    - req_id: F016-S01
+      case: "点击退出登录应触发登出流程并跳转首页"
+
+# ==============================================================================
+# MODULE: F002 - 快捷入口访问
+# ==============================================================================
+- type: Frontend
+  id: UI-QuickAccess
+  description: 首页快捷功能入口
+  implements: [F002]
+  state:
+    - historyRecords
+  dependencies:
+    - API-GET-SearchHistory
+  acceptanceCriteria:
+    - req_id: F002-S01
+      case: "应显示车票查询、订单查询、改签退票三个入口"
+    - req_id: F002-S06
+      case: "点击历史记录应自动填充查询参数"
+
+# ==============================================================================
+# MODULE: F003 - 车票查询
+# ==============================================================================
+- type: Frontend
+  id: UI-SearchForm
+  description: 车票查询表单
+  implements: [F003]
+  state:
+    - fromStation
+    - toStation
+    - date
+    - isHighSpeed
+  dependencies:
+    - API-GET-StationList
+  acceptanceCriteria:
+    - req_id: F003-S01
+      case: "输入拼音应能联想出中文站名"
+    - req_id: F003-S04
+      case: "点击互换按钮应交换出发地和目的地"
+    - req_id: F003-S08
+      case: "日期选择器不可选择过去的时间"
+
+- type: Frontend
+  id: UI-TrainList
+  description: 车次结果列表
+  implements: [F003]
+  state:
+    - trainList
+    - isLoading
+    - error
+  dependencies:
+    - API-GET-TrainQuery
+  acceptanceCriteria:
+    - req_id: F003-S16
+      case: "应显示车次号、起止时间、历时"
+    - req_id: F003-S20
+      case: "无直达车次时应显示中转推荐组件"
+
+# ==============================================================================
+# MODULE: F004 - 车次筛选
+# ==============================================================================
+- type: Frontend
+  id: UI-FilterPanel
+  description: 车次筛选侧边栏
+  implements: [F004]
+  state:
+    - filterConditions
+  acceptanceCriteria:
+    - req_id: F004-S03
+      case: "车次类型应支持多选 (G/D/Z/T)"
+    - req_id: F004-S15
+      case: "勾选条件后应立即过滤列表数据"
+
+# ==============================================================================
+# MODULE: F005 - 车票预订
+# ==============================================================================
+- type: Frontend
+  id: UI-BookingDialog
+  description: 预订详情弹窗
+  implements: [F005]
+  state:
+    - selectedPassengers
+    - selectedSeatType
+  dependencies:
+    - API-GET-PassengerList
+    - API-POST-LockTicket
+  acceptanceCriteria:
+    - req_id: F005-S01
+      case: "未登录用户尝试预订应跳转登录页"
+    - req_id: F005-S10
+      case: "最多只能选择 5 位乘车人"
+    - req_id: F005-S16
+      case: "提交成功后应跳转至订单确认页 (P005)"
+
+# ==============================================================================
+# MODULE: F006 - 中转换乘查询
+# ==============================================================================
+- type: Frontend
+  id: UI-TransferCard
+  description: 中转方案展示卡片
+  implements: [F006]
+  state:
+    - transferPlans
+  dependencies:
+    - API-GET-TransferRoutes
+  acceptanceCriteria:
+    - req_id: F006-S09
+      case: "应高亮显示中转站和换乘等待时间"
+    - req_id: F006-S12
+      case: "换乘时间不足 30 分钟应显示警告"
+
+# ==============================================================================
+# MODULE: F007 - 用户登录
+# ==============================================================================
+- type: Frontend
+  id: UI-LoginForm
+  description: 用户登录表单
+  implements: [F007]
+  state:
+    - loginMethod (password/sms)
+    - formData
+    - captchaUrl
+  dependencies:
+    - API-POST-Login
+    - API-POST-SendCode
+  acceptanceCriteria:
+    - req_id: F007-S02
+      case: "密码输入框应支持显示/隐藏切换"
+    - req_id: F007-S06
+      case: "发送验证码后应进入 60 秒倒计时"
+    - req_id: F007-S15
+      case: "登录成功后应返回来源页面"
+
+# ==============================================================================
+# MODULE: F008 - 用户注册
+# ==============================================================================
+- type: Frontend
+  id: UI-RegisterForm
+  description: 用户注册流程
+  implements: [F008]
+  state:
+    - step (basic/realname)
+    - formData
+  dependencies:
+    - API-POST-Register
+    - API-POST-CheckPhone
+  acceptanceCriteria:
+    - req_id: F008-S07
+      case: "密码必须包含字母和数字"
+    - req_id: F008-S15
+      case: "必须勾选协议才能点击注册按钮"
+
+# ==============================================================================
+# MODULE: F009 - 订单填写
+# ==============================================================================
+- type: Frontend
+  id: UI-OrderFillForm
+  description: 订单填写与确认页面
+  implements: [F009]
+  state:
+    - orderInfo
+    - countdown
+  dependencies:
+    - API-GET-PassengerList
+  acceptanceCriteria:
+    - req_id: F009-S04
+      case: "应显示 15 分钟倒计时"
+    - req_id: F009-S14
+      case: "选择儿童票时应自动计算优惠价格"
+
+# ==============================================================================
+# MODULE: F010 - 提交订单
+# ==============================================================================
+- type: Frontend
+  id: UI-SubmitOrderButton
+  description: 提交订单动作组件
+  implements: [F010]
+  state:
+    - isSubmitting
+  dependencies:
+    - API-POST-CreateOrder
+  acceptanceCriteria:
+    - req_id: F010-S01
+      case: "提交前应校验所有必填项"
+    - req_id: F010-S16
+      case: "点击后应禁用按钮防止重复提交"
+
+# ==============================================================================
+# MODULE: F011 - 个人信息管理
+# ==============================================================================
+- type: Frontend
+  id: UI-UserProfile
+  description: 个人信息展示与修改
+  implements: [F011]
+  state:
+    - userInfo
+    - isEditing
+  dependencies:
+    - API-GET-UserProfile
+    - API-PUT-UserProfile
+  acceptanceCriteria:
+    - req_id: F011-S03
+      case: "身份证号应脱敏显示"
+    - req_id: F011-S19
+      case: "上传头像应支持裁剪预览"
+
+# ==============================================================================
+# MODULE: F012 - 乘客管理
+# ==============================================================================
+- type: Frontend
+  id: UI-PassengerManager
+  description: 常用乘车人管理列表
+  implements: [F012]
+  state:
+    - passengerList
+    - showAddModal
+  dependencies:
+    - API-GET-PassengerList
+    - API-POST-Passenger
+    - API-DELETE-Passenger
+  acceptanceCriteria:
+    - req_id: F012-S07
+      case: "乘车人数量达到 15 人时禁用添加按钮"
+    - req_id: F012-S12
+      case: "添加时应校验身份证号合法性"
+
+# ==============================================================================
+# MODULE: F013 - 订单管理
+# ==============================================================================
+- type: Frontend
+  id: UI-OrderList
+  description: 历史订单列表
+  implements: [F013]
+  state:
+    - orders
+    - filterStatus
+  dependencies:
+    - API-GET-OrderList
+  acceptanceCriteria:
+    - req_id: F013-S01
+      case: "支持按状态筛选（待支付/已完成/已取消）"
+    - req_id: F013-S14
+      case: "列表应支持滚动加载更多"
+
+# ==============================================================================
+# MODULE: F014 - 订单支付
+# ==============================================================================
+- type: Frontend
+  id: UI-PaymentGateway
+  description: 收银台页面
+  implements: [F014]
+  state:
+    - paymentMethod
+    - qrCodeUrl
+    - payStatus
+  dependencies:
+    - API-POST-InitiatePay
+    - API-GET-PayStatus
+  acceptanceCriteria:
+    - req_id: F014-S12
+      case: "支付倒计时结束应自动取消订单"
+    - req_id: F014-S16
+      case: "应轮询支付状态，成功后自动跳转"
+
+# ==============================================================================
+# MODULE: F015 - 车票改签
+# ==============================================================================
+- type: Frontend
+  id: UI-ChangeTicketWizard
+  description: 改签流程向导
+  implements: [F015]
+  state:
+    - originalTicket
+    - newTicket
+    - priceDiff
+  dependencies:
+    - API-POST-ChangeTicket
+  acceptanceCriteria:
+    - req_id: F015-S04
+      case: "开车前 30 分钟内不可改签"
+    - req_id: F015-S12
+      case: "应正确显示补差价或退款金额"
+
+# ==============================================================================
+# MODULE: F016 - 用户登出
+# ==============================================================================
+# (已合并至 UI-Header 组件中实现)
